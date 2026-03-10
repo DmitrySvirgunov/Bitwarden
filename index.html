@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitwarden — менеджер паролей</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --bg-soft: #111c34;
+            --panel: #172554;
+            --panel-soft: #1e293b;
+            --card: rgba(255, 255, 255, 0.06);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --text: #e5eefc;
+            --muted: #a9b7d0;
+            --accent: #60a5fa;
+            --accent-2: #38bdf8;
+            --ok: #34d399;
+            --warn: #fbbf24;
+            --danger: #f87171;
+            --shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+            --radius: 18px;
+            --maxw: 1180px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(56, 189, 248, 0.15), transparent 26%),
+                radial-gradient(circle at top right, rgba(96, 165, 250, 0.12), transparent 24%),
+                linear-gradient(180deg, #08111f 0%, #0b1220 100%);
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(var(--maxw), calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: blur(10px);
+            background: rgba(9, 14, 26, 0.78);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .topbar-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 14px 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .brand-badge {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .nav {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: var(--muted);
+            font-size: 14px;
+            transition: 0.2s ease;
+        }
+
+        .nav a:hover {
+            color: var(--text);
+        }
+
+        .hero {
+            padding: 76px 0 48px;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .hero-panel {
+            background: linear-gradient(180deg, rgba(23, 37, 84, 0.86), rgba(15, 23, 42, 0.92));
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            padding: 34px;
+            box-shadow: var(--shadow);
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(96, 165, 250, 0.12);
+            color: #b9d9ff;
+            border: 1px solid rgba(96, 165, 250, 0.22);
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            margin: 0 0 16px;
+            font-size: clamp(34px, 5vw, 58px);
+            line-height: 1.08;
+        }
+
+        .hero p {
+            margin: 0 0 14px;
+            color: var(--muted);
+            font-size: 17px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 13px 18px;
+            border-radius: 14px;
+            font-weight: 600;
+            transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--card-border);
+            color: var(--text);
+        }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .mock-app {
+            background: linear-gradient(180deg, #0f1c35, #0a1324);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .mock-top {
+            background: #16233f;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            color: #bdd5f7;
+            font-size: 14px;
+        }
+
+        .mock-body {
+            padding: 16px;
+        }
+
+        .mock-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .mock-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .mock-box strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #dbeafe;
+        }
+
+        .section {
+            padding: 26px 0 10px;
+        }
+
+        .section-head {
+            margin-bottom: 22px;
+        }
+
+        .section-head h2 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        .section-head p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .grid-3,
+        .grid-2,
+        .grid-modules {
+            display: grid;
+            gap: 18px;
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .grid-modules {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .card h3 {
+            margin: 0 0 10px;
+            font-size: 19px;
+        }
+
+        .card p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 14px;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #2563eb, #38bdf8);
+        }
+
+        .list {
+            margin: 12px 0 0;
+            padding-left: 18px;
+            color: var(--muted);
+        }
+
+        .list li {
+            margin-bottom: 8px;
+        }
+
+        .timeline {
+            display: grid;
+            gap: 14px;
+        }
+
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            gap: 16px;
+            align-items: start;
+            padding: 16px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+        }
+
+        .timeline-badge {
+            text-align: center;
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            background: rgba(96, 165, 250, 0.12);
+            color: #bfdbfe;
+            border: 1px solid rgba(96, 165, 250, 0.25);
+        }
+
+        .audit {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+        .pill {
+            padding: 9px 12px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+
+        .pill.ok {
+            background: rgba(52, 211, 153, 0.12);
+            color: #8af0c6;
+            border-color: rgba(52, 211, 153, 0.24);
+        }
+
+        .pill.warn {
+            background: rgba(251, 191, 36, 0.12);
+            color: #ffd775;
+            border-color: rgba(251, 191, 36, 0.22);
+        }
+
+        .pill.danger {
+            background: rgba(248, 113, 113, 0.12);
+            color: #ffabab;
+            border-color: rgba(248, 113, 113, 0.22);
+        }
+
+        .footer {
+            padding: 34px 0 48px;
+            color: var(--muted);
+        }
+
+        .footer-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 22px;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .tech {
+            padding: 9px 12px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--card-border);
+            color: #d9e7ff;
+            font-size: 14px;
+        }
+
+        @media (max-width: 1080px) {
+            .hero-grid,
+            .grid-3,
+            .grid-modules {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 760px) {
+            .topbar-inner,
+            .nav {
+                align-items: flex-start;
+            }
+
+            .hero-grid,
+            .grid-2,
+            .grid-3,
+            .grid-modules {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-item {
+                grid-template-columns: 1fr;
+            }
+
+            .content-fix {
+                overflow: hidden;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="topbar">
+    <div class="container topbar-inner">
+        <div class="brand">
+            <div class="brand-badge">B</div>
+            <div>
+                <div>Bitwarden</div>
+                <div style="font-size: 12px; color: var(--muted); font-weight: 400;">Веб-презентация проекта</div>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <a href="#about">О проекте</a>
+            <a href="#features">Возможности</a>
+            <a href="#modules">Модули</a>
+            <a href="#security">Безопасность</a>
+            <a href="#workflow">Сценарий работы</a>
+            <a href="#stack">Технологии</a>
+        </nav>
+    </div>
+</header>
+
+<main class="content-fix">
+    <section class="hero">
+        <div class="container hero-grid">
+            <div class="hero-panel">
+                <div class="eyebrow">Курсовой / учебный проект</div>
+                <h1>Менеджер паролей Bitwarden</h1>
+                <p>
+                    Одностраничная презентация проекта системы для безопасного хранения,
+                    аудита и управления учётными данными пользователя.
+                </p>
+                <p>
+                    Приложение объединяет регистрацию и вход, хранилище записей,
+                    импорт и экспорт, безопасный обмен данными и проверки состояния безопасности.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="#features">Посмотреть возможности</a>
+                    <a class="btn btn-secondary" href="#modules">Изучить архитектуру</a>
+                </div>
+            </div>
+
+            <div class="hero-card">
+                <div class="mock-app">
+                    <div class="mock-top">Интерфейс хранилища</div>
+                    <div class="mock-body">
+                        <div class="mock-row">
+                            <div class="mock-box">
+                                <strong>GitHub</strong>
+                                login: user@example.com<br>
+                                url: https://github.local
+                            </div>
+                            <div class="mock-box">
+                                <strong>Google</strong>
+                                login: mail@example.com<br>
+                                url: https://mail.local
+                            </div>
+                        </div>
+                        <div class="mock-row">
+                            <div class="mock-box">
+                                <strong>Аудит</strong>
+                                2 слабых пароля<br>
+                                1 повторное использование
+                            </div>
+                            <div class="mock-box">
+                                <strong>Генератор</strong>
+                                длина: 18<br>
+                                спецсимволы: включены
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <div class="container">
+            <div class="section-head">
+                <h2>О проекте</h2>
+                <p>
+                    Проект предназначен для централизованного хранения логинов, паролей, URL-адресов
+                    и других чувствительных данных с дополнительными средствами проверки безопасности.
+                </p>
+            </div>
+
+            <div class="grid-3">
+                <article class="card">
+                    <div class="icon">01</div>
+                    <h3>Назначение</h3>
+                    <p>
+                        Упростить управление учётными данными и сократить риск компрометации
+                        аккаунтов за счёт безопасного хранения и контроля качества паролей.
+                    </p>
+                </article>
+
+                <article class="card">
+                    <div class="icon">02</div>
+                    <h3>Целевая функция</h3>
+                    <p>
+                        Объединить в одной системе регистрацию, вход, хранилище записей,
+                        импорт/экспорт, шаринг, аудит паролей и проверку сайтов.
+                    </p>
+                </article>
+
+                <article class="card">
+                    <div class="icon">03</div>
+                    <h3>Практическая ценность</h3>
+                    <p>
+                        Пользователь получает единое пространство для хранения паролей
+                        и инструменты для повышения общей защищённости цифровых аккаунтов.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="section">
+        <div class="container">
+            <div class="section-head">
+                <h2>Ключевые возможности</h2>
+                <p>Функции, реализующие основную предметную область проекта.</p>
+            </div>
+
+            <div class="grid-2">
+                <article class="card">
+                    <h3>Работа с хранилищем</h3>
+                    <ul class="list">
+                        <li>добавление и просмотр записей;</li>
+                        <li>хранение названия, логина, пароля и URL;</li>
+                        <li>поиск и редактирование элементов;</li>
+                        <li>централизованное управление доступами.</li>
+                    </ul>
+                </article>
+
+                <article class="card">
+                    <h3>Контроль безопасности</h3>
+                    <ul class="list">
+                        <li>проверка слабых паролей;</li>
+                        <li>поиск повторно используемых паролей;</li>
+                        <li>анализ безопасности сайта по HTTPS;</li>
+                        <li>оценка наличия двухфакторной аутентификации.</li>
+                    </ul>
+                </article>
+
+                <article class="card">
+                    <h3>Импорт, экспорт и обмен</h3>
+                    <ul class="list">
+                        <li>выгрузка хранилища в файл;</li>
+                        <li>загрузка ранее сохранённых данных;</li>
+                        <li>создание защищённой ссылки для передачи записи;</li>
+                        <li>подготовка резервной копии данных.</li>
+                    </ul>
+                </article>
+
+                <article class="card">
+                    <h3>Генерация и мониторинг</h3>
+                    <ul class="list">
+                        <li>создание новых стойких паролей;</li>
+                        <li>оценка компрометации email и пароля;</li>
+                        <li>поддержка сценариев аудита безопасности;</li>
+                        <li>повышение устойчивости пользовательских аккаунтов.</li>
+                    </ul>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="modules" class="section">
+        <div class="container">
+            <div class="section-head">
+                <h2>Функциональные модули</h2>
+                <p>Структура проекта, сформированная на основе предыдущих лабораторных работ.</p>
+            </div>
+
+            <div class="grid-modules">
+                <article class="card">
+                    <h3>AuthService</h3>
+                    <p>Регистрация пользователя, вход в систему, базовая обработка учётных данных.</p>
+                </article>
+
+                <article class="card">
+                    <h3>PasswordHasher</h3>
+                    <p>Хеширование и проверка паролей. Ядро безопасной обработки секретов.</p>
+                </article>
+
+                <article class="card">
+                    <h3>VaultService</h3>
+                    <p>Управление хранилищем: добавление, получение и организация записей.</p>
+                </article>
+
+                <article class="card">
+                    <h3>VaultItem</h3>
+                    <p>Сущность записи хранилища: название, логин, пароль и адрес сайта.</p>
+                </article>
+
+                <article class="card">
+                    <h3>ImportExportService</h3>
+                    <p>Импорт и экспорт данных пользователя во внешний формат.</p>
+                </article>
+
+                <article class="card">
+                    <h3>ShareService</h3>
+                    <p>Создание защищённой ссылки для передачи данных по ограниченному сценарию.</p>
+                </article>
+
+                <article class="card">
+                    <h3>SecurityAuditService</h3>
+                    <p>Проверка слабых и повторных паролей, анализ HTTPS и 2FA.</p>
+                </article>
+
+                <article class="card">
+                    <h3>BreachMonitorService</h3>
+                    <p>Мониторинг компрометации email и паролей по данным утечек.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="security" class="section">
+        <div class="container">
+            <div class="section-head">
+                <h2>Безопасность</h2>
+                <p>Проект ориентирован на снижение рисков, связанных с хранением и использованием паролей.</p>
+            </div>
+
+            <div class="grid-2">
+                <article class="card">
+                    <h3>Контроль состояния аккаунтов</h3>
+                    <p>
+                        Система должна помогать пользователю видеть проблемные места:
+                        слабые пароли, повторное использование, отсутствие HTTPS
+                        и поддержку двухэтапной аутентификации.
+                    </p>
+
+                    <div class="audit">
+                        <span class="pill ok">HTTPS включён</span>
+                        <span class="pill warn">2FA отсутствует</span>
+                        <span class="pill danger">Пароль скомпрометирован</span>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <h3>Защита конфиденциальных данных</h3>
+                    <p>
+                        Критичные сведения не должны храниться в открытом виде.
+                        Проект предусматривает использование безопасного хеширования
+                        и архитектурное разделение логики аутентификации и хранилища.
+                    </p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="workflow" class="section">
+        <div class="container">
+            <div class="section-head">
+                <h2>Сценарий работы пользователя</h2>
+                <p>Типовая последовательность использования приложения.</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-badge">Шаг 1</div>
+                    <div>
+                        <h3>Регистрация и вход</h3>
+                        <p>
+                            Пользователь создаёт учётную запись, задаёт мастер-пароль
+                            и проходит аутентификацию в системе.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-badge">Шаг 2</div>
+                    <div>
+                        <h3>Наполнение хранилища</h3>
+                        <p>
+                            После входа пользователь добавляет записи с логинами,
+                            паролями, URL и дополнительными метаданными.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-badge">Шаг 3</div>
+                    <div>
+                        <h3>Проверка безопасности</h3>
+                        <p>
+                            Выполняется аудит: поиск слабых и повторных паролей,
+                            оценка HTTPS, 2FA и возможной компрометации данных.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-badge">Шаг 4</div>
+                    <div>
+                        <h3>Обмен и резервирование</h3>
+                        <p>
+                            При необходимости пользователь экспортирует данные,
+                            импортирует резервную копию или создаёт безопасную ссылку.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="stack" class="section">
+        <div class="container">
+            <div class="section-head">
+                <h2>Технологии и реализация</h2>
+                <p>Техническая основа учебного проекта.</p>
+            </div>
+
+            <div class="card">
+                <h3>Используемый стек</h3>
+                <p>
+                    Проект ориентирован на Java-разработку и модульную организацию кода,
+                    что позволяет развивать систему по частям и демонстрировать предметную область
+                    на уровне отдельных сервисов и сущностей.
+                </p>
+
+                <div class="tech-stack">
+                    <span class="tech">Java</span>
+                    <span class="tech">OOP</span>
+                    <span class="tech">Javadoc</span>
+                    <span class="tech">HTML</span>
+                    <span class="tech">CSS</span>
+                    <span class="tech">Git</span>
+                    <span class="tech">GitHub Pages</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-box">
+            <strong>Итог:</strong> проект «Bitwarden» представляет собой учебную систему
+            для безопасного управления учётными данными, сочетающую хранение записей,
+            аудит паролей, контроль безопасности сайтов и средства обмена данными.
+        </div>
+    </div>
+</footer>
+</body>
+</html>
