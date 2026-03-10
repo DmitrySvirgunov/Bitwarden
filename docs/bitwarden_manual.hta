@@ -1,0 +1,821 @@
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Руководство пользователя — Менеджер паролей Bitwarden</title>
+
+    <HTA:APPLICATION
+        APPLICATIONNAME="Bitwarden Manual"
+        BORDER="thick"
+        BORDERSTYLE="normal"
+        CAPTION="yes"
+        MAXIMIZEBUTTON="yes"
+        MINIMIZEBUTTON="yes"
+        SHOWINTASKBAR="yes"
+        SINGLEINSTANCE="yes"
+        SYSMENU="yes"
+        WINDOWSTATE="normal"
+    />
+
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            background: #eef2f7;
+            color: #1b2430;
+            font-family: Arial, Tahoma, sans-serif;
+            font-size: 14px;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 270px;
+            height: 100%;
+            overflow: auto;
+            background: #1f2a44;
+            color: #ffffff;
+            padding: 16px 12px;
+            box-sizing: border-box;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #d6deea;
+            line-height: 18px;
+            margin-bottom: 16px;
+        }
+
+        .search {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #4a5877;
+            background: #162033;
+            color: #ffffff;
+            margin-bottom: 14px;
+        }
+
+        .navtitle {
+            font-size: 11px;
+            color: #aab8d0;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 14px 0 6px 4px;
+        }
+
+        .nav a {
+            display: block;
+            color: #e8eef9;
+            text-decoration: none;
+            padding: 8px 10px;
+            margin-bottom: 3px;
+            background: #1f2a44;
+        }
+
+        .nav a:hover {
+            background: #314f8c;
+        }
+
+        .nav a.active {
+            background: #314f8c;
+            font-weight: bold;
+        }
+
+        .content {
+            margin-left: 270px;
+            padding: 24px 28px 40px 28px;
+        }
+
+        .hero {
+            background: #2b4a84;
+            color: #ffffff;
+            border: 1px solid #1f3763;
+            padding: 22px;
+            margin-bottom: 18px;
+        }
+
+        .hero h1 {
+            margin: 0 0 10px 0;
+            font-size: 32px;
+            color: #ffffff;
+        }
+
+        .hero p {
+            margin: 6px 0;
+            line-height: 22px;
+            color: #ffffff;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #d4dce8;
+            padding: 18px 20px;
+            margin-bottom: 16px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 24px;
+            color: #203760;
+        }
+
+        .card h3 {
+            margin-top: 12px;
+            margin-bottom: 8px;
+            font-size: 18px;
+            color: #33538f;
+        }
+
+        p {
+            margin: 10px 0;
+            line-height: 22px;
+        }
+
+        ol {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding-left: 22px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 22px;
+        }
+
+        .hint {
+            border-left: 4px solid #3b82f6;
+            background: #eef6ff;
+            padding: 10px 12px;
+            margin-top: 12px;
+        }
+
+        .meta {
+            margin: 12px 0;
+        }
+
+        .metaBox {
+            display: inline-block;
+            vertical-align: top;
+            width: 30%;
+            min-width: 150px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            background: #f3f6fb;
+            border: 1px solid #d9e2f0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .shot {
+            margin-top: 14px;
+            border: 1px solid #d9e2f0;
+            background: #f9fbff;
+        }
+
+        .shotbar {
+            background: #ecf2fb;
+            border-bottom: 1px solid #d9e2f0;
+            padding: 8px 12px;
+            color: #47618c;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .shotbody {
+            padding: 14px;
+        }
+
+        .mock-window {
+            background: #ffffff;
+            border: 1px solid #d7e0ee;
+            padding: 12px;
+        }
+
+        .row {
+            margin-bottom: 10px;
+        }
+
+        .field {
+            display: inline-block;
+            vertical-align: top;
+            min-width: 180px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            background: #f4f7fb;
+            border: 1px solid #dce5f2;
+            padding: 10px 12px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 9px 14px;
+            background: #315fb5;
+            color: #ffffff;
+            margin-right: 8px;
+            font-size: 13px;
+        }
+
+        .btn.alt {
+            background: #6b7280;
+        }
+
+        .small {
+            font-size: 13px;
+            color: #5e6e88;
+        }
+
+        .kpiBox {
+            display: inline-block;
+            width: 140px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+            background: #f4f7fb;
+            border: 1px solid #dce5f2;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .footer {
+            text-align: center;
+            color: #5f708d;
+            font-size: 13px;
+            padding-top: 8px;
+        }
+    </style>
+
+    <script type="text/javascript">
+        function filterMenu() {
+            var q = document.getElementById('searchBox').value.toLowerCase();
+            var nav = document.getElementById('nav');
+            var links = nav.getElementsByTagName('a');
+            var i, txt;
+
+            for (i = 0; i < links.length; i++) {
+                txt = links[i].innerText || links[i].textContent || "";
+                if (txt.toLowerCase().indexOf(q) >= 0) {
+                    links[i].style.display = 'block';
+                } else {
+                    links[i].style.display = 'none';
+                }
+            }
+        }
+
+        function setActiveLink(el) {
+            var nav = document.getElementById('nav');
+            var links = nav.getElementsByTagName('a');
+            var i;
+
+            for (i = 0; i < links.length; i++) {
+                links[i].className = '';
+            }
+
+            if (el) {
+                el.className = 'active';
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="brand">Bitwarden</div>
+        <div class="subtitle">
+            Руководство пользователя в формате HTA<br />
+            Предметная область: менеджер паролей
+        </div>
+
+        <input id="searchBox" class="search" type="text" onkeyup="filterMenu()" placeholder="Поиск по разделам" />
+
+        <div class="nav" id="nav">
+            <div class="navtitle">Общие разделы</div>
+            <a href="#intro" onclick="setActiveLink(this)" class="active">Введение</a>
+            <a href="#roles" onclick="setActiveLink(this)">Роли и сценарии</a>
+            <a href="#start" onclick="setActiveLink(this)">Начало работы</a>
+
+            <div class="navtitle">Функциональные модули</div>
+            <a href="#crypto" onclick="setActiveLink(this)">Криптоалгоритмы</a>
+            <a href="#auth" onclick="setActiveLink(this)">Регистрация и вход</a>
+            <a href="#vault" onclick="setActiveLink(this)">Хранение данных</a>
+            <a href="#share" onclick="setActiveLink(this)">Отправка данных</a>
+            <a href="#generate" onclick="setActiveLink(this)">Генерация данных</a>
+            <a href="#export" onclick="setActiveLink(this)">Экспорт</a>
+            <a href="#import" onclick="setActiveLink(this)">Импорт</a>
+            <a href="#compromised" onclick="setActiveLink(this)">Скомпрометированные пароли</a>
+            <a href="#reused" onclick="setActiveLink(this)">Повторно используемые пароли</a>
+            <a href="#weak" onclick="setActiveLink(this)">Слабые пароли</a>
+            <a href="#site" onclick="setActiveLink(this)">Безопасность сайта</a>
+            <a href="#twofa" onclick="setActiveLink(this)">Проверка 2FA</a>
+            <a href="#breach" onclick="setActiveLink(this)">Мониторинг утечек</a>
+            <a href="#extension" onclick="setActiveLink(this)">Расширение браузера</a>
+
+            <div class="navtitle">Завершение</div>
+            <a href="#notes" onclick="setActiveLink(this)">Примечания</a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="hero">
+            <h1>Руководство пользователя</h1>
+            <p><b>Программная система:</b> менеджер паролей Bitwarden.</p>
+            <p>
+                Документ описывает назначение системы, основные роли и порядок
+                использования всех модулей: от регистрации и хранения данных
+                до аудита безопасности, проверки 2FA и мониторинга утечек.
+            </p>
+        </div>
+
+        <div id="intro" class="card">
+            <h2>1. Введение</h2>
+            <p>
+                Менеджер паролей предназначен для безопасного хранения логинов,
+                паролей, ссылок и иных чувствительных данных пользователя.
+                Система уменьшает риск утраты доступа к аккаунтам и помогает
+                соблюдать базовые требования информационной безопасности.
+            </p>
+            <p>
+                Пользователь может работать с отдельными записями хранилища,
+                формировать новые пароли, выполнять импорт и экспорт, а также
+                запускать проверки, связанные с качеством пароля и безопасностью веб-ресурсов.
+            </p>
+            <div class="hint">
+                Руководство ориентировано на практическое использование системы
+                и содержит краткие примеры по каждому модулю.
+            </div>
+        </div>
+
+        <div id="roles" class="card">
+            <h2>2. Роли и сценарии</h2>
+            <h3>Пользователь</h3>
+            <p>
+                Основная роль системы. Пользователь регистрируется, входит в аккаунт,
+                добавляет записи в личное хранилище, использует генератор паролей,
+                а также запускает проверки безопасности по своим данным.
+            </p>
+
+            <h3>Владелец общей коллекции</h3>
+            <p>
+                В расширенном сценарии владелец коллекции может хранить записи
+                не только в личном пространстве, но и в общей папке, доступной
+                для нескольких участников. Такой режим полезен для командной работы.
+            </p>
+        </div>
+
+        <div id="start" class="card">
+            <h2>3. Начало работы</h2>
+            <ol>
+                <li>Запустить приложение и открыть форму регистрации или входа.</li>
+                <li>Создать учётную запись с использованием email и мастер-пароля.</li>
+                <li>После входа перейти в хранилище и добавить первую запись.</li>
+                <li>При необходимости открыть раздел аудита безопасности и выполнить проверку сохранённых данных.</li>
+            </ol>
+
+            <div class="shot">
+                <div class="shotbar">Пример стартового окна</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="row">
+                            <div class="field">Email: user@example.com</div>
+                            <div class="field">Мастер-пароль: ••••••••••••</div>
+                        </div>
+                        <span class="btn">Войти</span>
+                        <span class="btn alt">Зарегистрироваться</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="crypto" class="card">
+            <h2>4. Криптоалгоритмы</h2>
+
+            <div class="meta">
+                <div class="metaBox"><b>Назначение:</b><br />Защита конфиденциальных данных</div>
+                <div class="metaBox"><b>Пользователь видит:</b><br />Признаки защищённого хранения</div>
+                <div class="metaBox"><b>Результат:</b><br />Снижение риска раскрытия паролей</div>
+            </div>
+
+            <p>
+                Модуль криптоалгоритмов отвечает за безопасную обработку чувствительной
+                информации. На практике это означает, что мастер-пароль и связанные
+                секреты не должны храниться в открытом виде и должны проходить через
+                защищённые алгоритмы преобразования.
+            </p>
+            <p>
+                Для пользователя данный модуль обычно незаметен, однако его работа
+                проявляется в том, что система использует мастер-пароль для входа,
+                а данные в хранилище защищены при сохранении и передаче.
+            </p>
+
+            <div class="shot">
+                <div class="shotbar">Иллюстрация работы криптозащиты</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="row">
+                            <div class="field">Введённый пароль → обработка</div>
+                            <div class="field">Хеш / защищённое представление</div>
+                        </div>
+                        <div class="small">Открытый пароль не сохраняется в системе напрямую.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="auth" class="card">
+            <h2>5. Регистрация и вход</h2>
+            <p>
+                Раздел регистрации и входа используется для создания учётной записи,
+                последующей аутентификации и восстановления доступа. При регистрации
+                система проверяет корректность email и базовые требования к мастер-паролю.
+            </p>
+            <p>
+                При входе выполняется проверка введённых данных. Если пользователь ввёл
+                верные учётные данные, открывается главное окно приложения и становится
+                доступным личное хранилище.
+            </p>
+
+            <ol>
+                <li>Открыть форму регистрации.</li>
+                <li>Ввести email и надёжный мастер-пароль.</li>
+                <li>Подтвердить создание учётной записи.</li>
+                <li>Использовать те же данные для последующего входа.</li>
+            </ol>
+
+            <div class="shot">
+                <div class="shotbar">Пример формы регистрации</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="row">
+                            <div class="field">Email</div>
+                            <div class="field">Мастер-пароль</div>
+                        </div>
+                        <div class="row">
+                            <div class="field">Подтверждение пароля</div>
+                            <div class="field">Подсказка к паролю</div>
+                        </div>
+                        <span class="btn">Создать аккаунт</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="vault" class="card">
+            <h2>6. Хранение данных</h2>
+            <p>
+                Хранилище данных — центральный модуль системы. В нём размещаются записи,
+                содержащие название ресурса, логин, пароль, URL и дополнительные заметки.
+                В расширенной версии также могут храниться банковские карты, документы
+                и иные типы записей.
+            </p>
+            <p>
+                После входа пользователь открывает список записей, добавляет новый элемент,
+                редактирует существующий или выполняет поиск по названию и адресу сайта.
+                Такой подход позволяет централизованно управлять доступом ко всем сервисам.
+            </p>
+
+            <div class="shot">
+                <div class="shotbar">Пример карточки записи</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="row">
+                            <div class="field">Название: GitHub</div>
+                            <div class="field">Логин: user@example.com</div>
+                        </div>
+                        <div class="row">
+                            <div class="field">Пароль: ••••••••••••</div>
+                            <div class="field">URL: https://github.com</div>
+                        </div>
+                        <span class="btn">Сохранить</span>
+                        <span class="btn alt">Проверить безопасность</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="share" class="card">
+            <h2>7. Отправка данных</h2>
+            <p>
+                Модуль отправки данных предназначен для безопасной передачи выбранной
+                записи по ссылке. Для ссылки могут задаваться дополнительные ограничения,
+                например пароль доступа, лимит просмотров и дата автоматического удаления.
+            </p>
+            <p>
+                Такой режим удобен, когда необходимо временно передать доступ к записи
+                другому пользователю, не раскрывая содержимое постоянного хранилища.
+            </p>
+
+            <div class="shot">
+                <div class="shotbar">Пример окна создания ссылки</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="row">
+                            <div class="field">Ссылка: https://share.local/item/245</div>
+                        </div>
+                        <div class="row">
+                            <div class="field">Пароль ссылки: ••••••••</div>
+                            <div class="field">Лимит просмотров: 3</div>
+                        </div>
+                        <div class="row">
+                            <div class="field">Дата удаления: 31.03.2026</div>
+                        </div>
+                        <span class="btn">Создать ссылку</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="generate" class="card">
+            <h2>8. Генерация данных</h2>
+            <p>
+                Генератор используется для создания новых паролей, парольных фраз и,
+                при необходимости, имён пользователя. Пользователь задаёт длину,
+                состав символов, количество цифр и специальных знаков.
+            </p>
+            <p>
+                Применение генератора позволяет отказаться от простых и повторяющихся
+                комбинаций, что положительно влияет на общий уровень защищённости аккаунтов.
+            </p>
+
+            <div class="shot">
+                <div class="shotbar">Пример генератора пароля</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="row">
+                            <div class="field">Длина: 18</div>
+                            <div class="field">Мин. цифр: 3</div>
+                            <div class="field">Мин. символов: 2</div>
+                        </div>
+                        <div class="row">
+                            <div class="field">Включить: A-Z, a-z, 0-9, !@#</div>
+                        </div>
+                        <div class="row">
+                            <div class="field">Результат: fR7!mN2@qLp4#Za8Xs</div>
+                        </div>
+                        <span class="btn">Сгенерировать</span>
+                        <span class="btn alt">Использовать в записи</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="export" class="card">
+            <h2>9. Экспорт</h2>
+            <p>
+                Модуль экспорта позволяет выгружать данные хранилища во внешний файл
+                для резервного копирования или переноса в другую систему. Пользователь
+                выбирает формат и запускает процедуру сохранения.
+            </p>
+            <p>
+                Перед экспортом рекомендуется убедиться, что файл будет храниться
+                в защищённом месте, поскольку он может содержать чувствительную информацию.
+            </p>
+
+            <div class="shot">
+                <div class="shotbar">Пример окна экспорта</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="row">
+                            <div class="field">Формат: JSON</div>
+                            <div class="field">Шифровать файл: Да</div>
+                        </div>
+                        <span class="btn">Экспортировать</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="import" class="card">
+            <h2>10. Импорт</h2>
+            <p>
+                Импорт применяется для загрузки ранее сохранённых данных в аккаунт
+                пользователя. Это удобно при переходе с другого менеджера паролей
+                или при восстановлении резервной копии.
+            </p>
+            <p>
+                После выбора файла система анализирует содержимое, импортирует записи
+                и отображает итог: количество успешно добавленных элементов и возможные предупреждения.
+            </p>
+
+            <div class="shot">
+                <div class="shotbar">Пример окна импорта</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="row">
+                            <div class="field">Выбранный файл: vault_backup.json</div>
+                        </div>
+                        <span class="btn">Импортировать</span>
+                        <div class="hint">Импортировано записей: 24. Пропущено дубликатов: 2.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="compromised" class="card">
+            <h2>11. Аналитика скомпрометированных паролей</h2>
+            <p>
+                Данный модуль сообщает пользователю, что пароль встречался в известных
+                утечках или внешних базах скомпрометированных данных. При обнаружении
+                совпадения система рекомендует немедленно заменить пароль на новый.
+            </p>
+            <p>
+                Проверка может выполняться как в момент добавления новой записи,
+                так и по уже сохранённым элементам хранилища в составе общего аудита безопасности.
+            </p>
+
+            <div class="shot">
+                <div class="shotbar">Пример уведомления</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="hint">
+                            Внимание: пароль для записи «GitHub» найден среди ранее
+                            скомпрометированных значений. Рекомендуется заменить его.
+                        </div>
+                        <span class="btn">Открыть запись</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="reused" class="card">
+            <h2>12. Анализ повторно используемых паролей</h2>
+            <p>
+                Модуль повторного использования помогает обнаруживать ситуации,
+                когда одинаковый или очень похожий пароль применяется для нескольких сайтов.
+                Такая практика считается небезопасной, поскольку компрометация одного
+                ресурса увеличивает риск доступа к другим аккаунтам.
+            </p>
+            <p>
+                После проверки пользователь получает список записей, требующих замены
+                пароля, и может последовательно обновить их с помощью генератора.
+            </p>
+
+            <div class="shot">
+                <div class="shotbar">Пример результата проверки</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="kpiBox"><b>4</b><br />повторяющихся пароля</div>
+                        <div class="kpiBox"><b>2</b><br />критичных совпадения</div>
+                        <div class="kpiBox"><b>7</b><br />уникальных записей</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="weak" class="card">
+            <h2>13. Поиск слабых паролей</h2>
+            <p>
+                Модуль слабых паролей проверяет длину, разнообразие символов
+                и наличие слишком простых комбинаций. Он помогает заранее увидеть,
+                какие записи нуждаются в усилении защиты.
+            </p>
+            <p>
+                В типичном сценарии пользователь запускает проверку и получает перечень
+                паролей, которые не соответствуют внутренним критериям безопасности.
+            </p>
+
+            <div class="shot">
+                <div class="shotbar">Пример оценки сложности</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="row">
+                            <div class="field">Пароль: qwerty123</div>
+                            <div class="field">Оценка: Слабый</div>
+                        </div>
+                        <div class="row">
+                            <div class="field">Рекомендация: увеличить длину и добавить специальные символы</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="site" class="card">
+            <h2>14. Аналитика безопасности сайта</h2>
+            <p>
+                Проверка безопасности сайта определяет, использует ли ресурс защищённый
+                протокол HTTPS. Если запись ссылается на адрес с HTTP, система сообщает,
+                что передача данных на таком сайте может быть менее безопасной.
+            </p>
+            <p>
+                Эта проверка особенно полезна перед сохранением новой записи
+                или при регулярном аудите уже имеющегося хранилища.
+            </p>
+
+            <div class="shot">
+                <div class="shotbar">Пример результата проверки URL</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="row">
+                            <div class="field">URL: http://example-site.com</div>
+                            <div class="field">Статус: Небезопасное соединение</div>
+                        </div>
+                        <span class="btn alt">Изменить адрес</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="twofa" class="card">
+            <h2>15. Проверка активности двухэтапной аутентификации</h2>
+            <p>
+                Данный модуль информирует пользователя, поддерживает ли выбранный
+                веб-ресурс двухэтапную аутентификацию. При наличии такой возможности
+                рекомендуется включить её, так как она добавляет дополнительный барьер
+                для злоумышленника.
+            </p>
+            <p>
+                Результат проверки можно использовать как часть общего аудита безопасности
+                при работе со списком сохранённых сайтов.
+            </p>
+
+            <div class="shot">
+                <div class="shotbar">Пример карточки 2FA</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="row">
+                            <div class="field">Сайт: github.com</div>
+                            <div class="field">2FA: Поддерживается</div>
+                        </div>
+                        <span class="btn">Открыть рекомендации</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="breach" class="card">
+            <h2>16. Мониторинг утечек данных</h2>
+            <p>
+                Мониторинг утечек данных используется для проверки email-адреса
+                на присутствие в известных базах утечек. Если адрес уже фигурировал
+                в утечках, пользователь получает предупреждение и рекомендации по смене паролей.
+            </p>
+            <p>
+                Такой модуль помогает оценить общий риск по аккаунту и своевременно
+                принять меры: обновить критичные пароли, проверить настройки безопасности
+                и включить двухэтапную аутентификацию.
+            </p>
+
+            <div class="shot">
+                <div class="shotbar">Пример проверки email</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="row">
+                            <div class="field">Email: user@example.com</div>
+                        </div>
+                        <span class="btn">Проверить</span>
+                        <div class="hint">Результат: адрес найден в 2 зарегистрированных утечках. Требуется обновление паролей.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="extension" class="card">
+            <h2>17. Расширение для браузера</h2>
+            <p>
+                Расширение для браузера ускоряет работу с системой: позволяет быстро
+                сохранять найденные учётные данные и подставлять логин и пароль в формы
+                авторизации без открытия основного окна приложения.
+            </p>
+            <p>
+                Такой режим повышает удобство использования и уменьшает число ручных
+                операций при повседневной работе с веб-ресурсами.
+            </p>
+
+            <div class="shot">
+                <div class="shotbar">Пример панели расширения</div>
+                <div class="shotbody">
+                    <div class="mock-window">
+                        <div class="row">
+                            <div class="field">Текущий сайт: github.com</div>
+                        </div>
+                        <span class="btn">Автозаполнить</span>
+                        <span class="btn alt">Сохранить новую запись</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="notes" class="card">
+            <h2>18. Примечания</h2>
+            <p>
+                Данное HTA-руководство предназначено для демонстрации пользовательской
+                документации по предметной области «Менеджер паролей Bitwarden».
+                При необходимости текст можно адаптировать под конкретную реализацию
+                проекта и заменить иллюстративные примеры реальными скриншотами интерфейса.
+            </p>
+            <div class="footer">
+                Файл можно запускать в Windows двойным щелчком как обычное HTA-приложение.
+            </div>
+        </div>
+    </div>
+</body>
+</html>
